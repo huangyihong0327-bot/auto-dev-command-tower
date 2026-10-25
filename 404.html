@@ -203,8 +203,8 @@
           <div class="glass-panel p-4 rounded-[6px] flex items-center justify-between relative">
             <div>
               <div class="text-xs text-[#3b6b73] font-bold mb-1">全案綜合完成度</div>
-              <div class="text-2xl font-bold font-mono text-[#2f5d43]">{ overallProgress }%</div>
-              <div class="text-[11px] text-[#3b6b73] font-medium mt-1">{ projects.length } 項工程模組平均</div>
+              <div class="text-2xl font-bold font-mono text-[#2f5d43]">{{ overallProgress }}%</div>
+              <div class="text-[11px] text-[#3b6b73] font-medium mt-1">{{ projects.length }} 項工程模組平均</div>
             </div>
             <div class="w-12 h-12 rounded-[6px] bg-[#2f5d43]/15 border-[2px] border-[#0f172a] shadow-[2px_2px_0px_#0f172a] flex items-center justify-center text-[#2f5d43] text-xl">
               <i class="fa-solid fa-trophy"></i>
@@ -215,10 +215,10 @@
             <div>
               <div class="text-xs text-[#3b6b73] font-bold mb-1">每週高階模型算力點數</div>
               <div class="text-2xl font-bold font-mono text-[#3b6b73]">
-                { totalAllocatedWeeklyTokens } <span class="text-xs text-[#3b6b73]">/ { quotaPlan.total_weekly_budget } 點</span>
+                {{ totalAllocatedWeeklyTokens }} <span class="text-xs text-[#3b6b73]">/ {{ quotaPlan.total_weekly_budget }} 點</span>
               </div>
               <div class="text-[11px] text-[#3b6b73] font-medium mt-1">
-                分配率: { Math.round((totalAllocatedWeeklyTokens / quotaPlan.total_weekly_budget) * 100) }%
+                分配率: {{ Math.round((totalAllocatedWeeklyTokens / quotaPlan.total_weekly_budget) * 100) }}%
               </div>
             </div>
             <div class="w-12 h-12 rounded-[6px] bg-[#3b6b73]/15 border-[2px] border-[#0f172a] shadow-[2px_2px_0px_#0f172a] flex items-center justify-center text-[#3b6b73] text-xl">
@@ -230,7 +230,7 @@
             <div>
               <div class="text-xs text-[#3b6b73] font-bold mb-1">重大突破 / 審查中專案</div>
               <div class="text-2xl font-bold font-mono text-[#2f5d43]">
-                { statusCounts.review + statusCounts.completed } <span class="text-xs text-[#3b6b73]">/ { projects.length } 項</span>
+                {{ statusCounts.review + statusCounts.completed }} <span class="text-xs text-[#3b6b73]">/ {{ projects.length }} 項</span>
               </div>
               <div class="text-[11px] text-[#2f5d43] font-medium mt-1">PRJ-01 工地日報已達 92%</div>
             </div>
@@ -243,7 +243,7 @@
             <div>
               <div class="text-xs text-[#3b6b73] font-bold mb-1">外出靈感隨手筆記總量</div>
               <div class="text-2xl font-bold font-mono text-[#d97706]">
-                { totalNotesCount } <span class="text-xs text-[#3b6b73]">則筆記</span>
+                {{ totalNotesCount }} <span class="text-xs text-[#3b6b73]">則筆記</span>
               </div>
               <div class="text-[11px] text-[#3b6b73] font-medium mt-1">隨時隨地記錄即時想法</div>
             </div>
@@ -371,7 +371,7 @@
             :class="activeCategory === 'all' ? 'bg-[#2f5d43] text-white shadow-[2px_2px_0px_#0f172a] border-[2px] border-[#0f172a]' : 'bg-[#ffffff] text-[#0f172a] border-[2px] border-[#0f172a] shadow-[2px_2px_0px_#0f172a]'"
             class="px-3 py-1.5 rounded-[4px] text-xs font-bold flex items-center gap-1.5">
             <i class="fa-solid fa-border-all text-xs"></i>
-            全部專案 ({ projects.length })
+            全部專案 ({{ projects.length }})
           </button>
           <button 
             v-for="cat in categories" 
@@ -379,8 +379,8 @@
             @click="activeCategory = cat.id"
             :class="activeCategory === cat.id ? 'bg-[#2f5d43] text-white shadow-[2px_2px_0px_#0f172a] border-[2px] border-[#0f172a]' : 'bg-[#ffffff] text-[#0f172a] border-[2px] border-[#0f172a] shadow-[2px_2px_0px_#0f172a]'"
             class="px-3 py-1.5 rounded-[4px] text-xs font-bold flex items-center gap-1.5">
-            <span>{ cat.name }</span>
-            <span class="text-[10px] font-mono opacity-90">({ getCategoryCount(cat.id) })</span>
+            <span>{{ cat.name }}</span>
+            <span class="text-[10px] font-mono opacity-90">({{ getCategoryCount(cat.id) }})</span>
           </button>
         </div>
 
@@ -395,44 +395,44 @@
             <div>
               <div class="flex items-center justify-between mb-2">
                 <span class="text-[11px] font-mono px-2 py-0.5 rounded-[4px] bg-[#eef4f0] border-[2px] border-[#0f172a] text-[#0f172a] font-bold">
-                  { p.id }
+                  {{ p.id }}
                 </span>
                 <div class="flex items-center gap-1.5">
                   <span v-if="p.notes && p.notes.length" class="text-[10px] font-bold px-1.5 py-0.5 rounded-[4px] bg-[#d97706]/20 text-[#d97706] border border-[#d97706]">
-                    💡 { p.notes.length } 則靈感
+                    💡 {{ p.notes.length }} 則靈感
                   </span>
                   <span :class="getPriorityClass(p.priority)" class="text-[10px] font-bold px-1.5 py-0.5 rounded-[4px] uppercase">
-                    { p.priority }
+                    {{ p.priority }}
                   </span>
                   <span :class="getStatusBadgeClass(p.status)" class="text-[10px] px-2 py-0.5 rounded-[4px] font-bold">
-                    { getStatusLabel(p.status) }
+                    {{ getStatusLabel(p.status) }}
                   </span>
                 </div>
               </div>
 
               <h3 class="text-sm font-bold text-[#0f172a] font-heading group-hover:text-[#2f5d43] mb-1.5 line-clamp-1 flex items-center gap-1.5">
-                <span>{ p.name }</span>
+                <span>{{ p.name }}</span>
                 <span v-if="p.report_file" class="text-[10px] text-[#2f5d43]" title="已附帶審查報告">
                   <i class="fa-solid fa-file-shield"></i>
                 </span>
               </h3>
 
               <p class="text-xs text-[#3b6b73] line-clamp-2 leading-relaxed mb-3">
-                { p.summary }
+                {{ p.summary }}
               </p>
             </div>
 
             <div class="space-y-2 pt-2 border-t-[2px] border-[#0f172a]/20">
               <div class="flex items-center justify-between text-[11px]">
                 <span class="text-[#3b6b73] font-bold">每週模型配額:</span>
-                <span class="text-[#2f5d43] font-mono font-bold">{ p.high_model_weekly_tokens } 點</span>
+                <span class="text-[#2f5d43] font-mono font-bold">{{ p.high_model_weekly_tokens }} 點</span>
               </div>
 
               <div>
                 <div class="flex justify-between text-[11px] text-[#0f172a] mb-1 font-mono font-bold">
                   <span>進度</span>
                   <span :class="p.progress === 100 ? 'text-[#2f5d43]' : p.progress > 0 ? 'text-[#3b6b73]' : 'text-[#64748b]'">
-                    { p.progress }%
+                    {{ p.progress }}%
                   </span>
                 </div>
                 <div class="w-full h-2 bg-[#eef4f0] border border-[#0f172a] rounded-[3px] overflow-hidden">
@@ -465,30 +465,30 @@
               </thead>
               <tbody class="divide-y divide-[#0f172a]/20">
                 <tr v-for="p in processedProjects" :key="p.id" class="hover:bg-[#eef4f0]/80 transition-colors">
-                  <td class="py-3 px-4 font-mono font-bold text-[#0f172a]">{ p.id }</td>
+                  <td class="py-3 px-4 font-mono font-bold text-[#0f172a]">{{ p.id }}</td>
                   <td class="py-3 px-4 font-bold text-[#0f172a] font-heading flex items-center gap-2">
-                    <span>{ p.name }</span>
+                    <span>{{ p.name }}</span>
                     <span v-if="p.report_file" class="text-[#2f5d43] text-[10px]" title="附帶審查報告">
                       <i class="fa-solid fa-file-shield"></i>
                     </span>
                   </td>
                   <td class="py-3 px-4">
                     <span v-if="p.notes && p.notes.length" class="text-[11px] font-bold text-[#d97706]">
-                      💡 { p.notes.length } 則
+                      💡 {{ p.notes.length }} 則
                     </span>
                     <span v-else class="text-[11px] text-[#64748b]">無備註</span>
                   </td>
                   <td class="py-3 px-4">
                     <span :class="getPriorityClass(p.priority)" class="text-[10px] font-bold px-1.5 py-0.5 rounded-[4px]">
-                      { p.priority }
+                      {{ p.priority }}
                     </span>
                   </td>
                   <td class="py-3 px-4">
                     <span :class="getStatusBadgeClass(p.status)" class="text-[10px] px-2 py-0.5 rounded-[4px] font-bold inline-block">
-                      { getStatusLabel(p.status) }
+                      {{ getStatusLabel(p.status) }}
                     </span>
                   </td>
-                  <td class="py-3 px-4 text-center font-mono text-[#2f5d43] font-bold">{ p.high_model_weekly_tokens }</td>
+                  <td class="py-3 px-4 text-center font-mono text-[#2f5d43] font-bold">{{ p.high_model_weekly_tokens }}</td>
                   <td class="py-3 px-4">
                     <div class="flex items-center gap-2 font-mono font-bold">
                       <div class="w-24 h-2 bg-[#eef4f0] border border-[#0f172a] rounded-[2px] overflow-hidden">
@@ -498,7 +498,7 @@
                           :style="{ width: p.progress + '%' }">
                         </div>
                       </div>
-                      <span class="text-[#0f172a] w-8">{ p.progress }%</span>
+                      <span class="text-[#0f172a] w-8">{{ p.progress }}%</span>
                     </div>
                   </td>
                   <td class="py-3 px-4 text-right">
@@ -518,10 +518,10 @@
             <div class="flex items-center justify-between pb-2 border-b-[2px] border-[#0f172a]">
               <span class="text-xs font-bold text-[#0f172a] font-heading flex items-center gap-1.5">
                 <span class="w-2.5 h-2.5 rounded-full" :class="lane.dotClass"></span>
-                { lane.title }
+                {{ lane.title }}
               </span>
               <span class="text-xs font-mono px-2 py-0.5 rounded-[4px] bg-[#eef4f0] border border-[#0f172a] text-[#0f172a] font-bold">
-                { lane.items.length }
+                {{ lane.items.length }}
               </span>
             </div>
             <div class="flex flex-col gap-2 overflow-y-auto max-h-[65vh]">
@@ -531,16 +531,16 @@
                 @click="selectProject(p)"
                 class="p-3 rounded-[6px] bg-[#eef4f0] hover:bg-[#ffffff] border-[2px] border-[#0f172a] shadow-[2px_2px_0px_#0f172a] cursor-pointer transition-all">
                 <div class="flex justify-between items-center mb-1">
-                  <span class="text-[10px] font-mono text-[#0f172a] font-bold">{ p.id }</span>
+                  <span class="text-[10px] font-mono text-[#0f172a] font-bold">{{ p.id }}</span>
                   <div class="flex items-center gap-1">
-                    <span v-if="p.notes && p.notes.length" class="text-[9px] font-bold text-[#d97706]">💡{ p.notes.length }</span>
+                    <span v-if="p.notes && p.notes.length" class="text-[9px] font-bold text-[#d97706]">💡{{ p.notes.length }}</span>
                     <span :class="getPriorityClass(p.priority)" class="text-[9px] font-bold px-1 py-0.2 rounded-[3px]">
-                      { p.priority }
+                      {{ p.priority }}
                     </span>
                   </div>
                 </div>
-                <div class="text-xs font-bold text-[#0f172a] font-heading mb-1">{ p.name }</div>
-                <div class="text-[11px] text-[#3b6b73] line-clamp-1">{ p.summary }</div>
+                <div class="text-xs font-bold text-[#0f172a] font-heading mb-1">{{ p.name }}</div>
+                <div class="text-[11px] text-[#3b6b73] line-clamp-1">{{ p.summary }}</div>
               </div>
             </div>
           </div>
@@ -558,18 +558,18 @@
 
         <div class="flex items-center gap-3 mb-2">
           <span class="text-xs font-mono px-2 py-0.5 rounded-[4px] bg-[#2f5d43] text-white border-[2px] border-[#0f172a] shadow-[1px_1px_0px_#0f172a] font-bold">
-            { selectedProj.id }
+            {{ selectedProj.id }}
           </span>
           <span class="text-xs px-2 py-0.5 rounded-[4px] bg-[#eef4f0] text-[#0f172a] border-[2px] border-[#0f172a] font-bold">
-            { getCategoryName(selectedProj.category) }
+            {{ getCategoryName(selectedProj.category) }}
           </span>
           <span :class="getPriorityClass(selectedProj.priority)" class="text-xs font-bold px-2 py-0.5 rounded-[4px]">
-            優先級: { selectedProj.priority }
+            優先級: {{ selectedProj.priority }}
           </span>
         </div>
 
-        <h2 class="text-xl font-bold text-[#0f172a] font-heading mb-2">{ selectedProj.name }</h2>
-        <p class="text-xs text-[#3b6b73] mb-4 leading-relaxed">{ selectedProj.summary }</p>
+        <h2 class="text-xl font-bold text-[#0f172a] font-heading mb-2">{{ selectedProj.name }}</h2>
+        <p class="text-xs text-[#3b6b73] mb-4 leading-relaxed">{{ selectedProj.summary }}</p>
 
         <!-- 💡 核心亮點功能：在外隨手靈感與待辦備忘 (Quick Brainstorm & Notes) -->
         <div class="mb-5 p-4 rounded-[6px] bg-[#eef4f0] border-[2px] border-[#0f172a] shadow-[3px_3px_0px_#0f172a]">
@@ -578,7 +578,7 @@
               <i class="fa-solid fa-lightbulb text-[#d97706]"></i>
               在外隨手靈感備忘錄 (隨時打字或語音輸入，即刻自動儲存)
             </h4>
-            <span class="text-[11px] font-mono text-[#3b6b73] font-bold">共 { (selectedProj.notes || []).length } 則紀錄</span>
+            <span class="text-[11px] font-mono text-[#3b6b73] font-bold">共 {{ (selectedProj.notes || []).length }} 則紀錄</span>
           </div>
 
           <!-- 新增筆記輸入列 -->
@@ -599,8 +599,8 @@
           <div v-if="selectedProj.notes && selectedProj.notes.length" class="space-y-2 max-h-40 overflow-y-auto pr-1">
             <div v-for="(n, idx) in selectedProj.notes" :key="idx" class="p-2.5 rounded-[4px] bg-[#ffffff] border border-[#0f172a] shadow-[1px_1px_0px_#0f172a] flex items-start justify-between gap-2 text-xs">
               <div>
-                <div class="text-[#0f172a] font-medium leading-relaxed">{ n.text }</div>
-                <div class="text-[10px] text-[#64748b] font-mono mt-0.5">{ n.created_at }</div>
+                <div class="text-[#0f172a] font-medium leading-relaxed">{{ n.text }}</div>
+                <div class="text-[10px] text-[#64748b] font-mono mt-0.5">{{ n.created_at }}</div>
               </div>
               <button @click="removeProjectNote(idx)" class="text-red-500 hover:text-red-700 p-1 font-bold text-xs" title="刪除此則">
                 <i class="fa-solid fa-trash-can"></i>
@@ -623,11 +623,11 @@
               @click="copyPrompt(selectedProj)" 
               class="px-2.5 py-1 text-xs rounded-[4px] bg-[#2f5d43] hover:bg-[#234632] text-white font-bold border-[2px] border-[#0f172a] shadow-[2px_2px_0px_#0f172a] flex items-center gap-1.5">
               <i class="fa-regular fa-copy"></i>
-              <span>{ copyStatusText }</span>
+              <span>{{ copyStatusText }}</span>
             </button>
           </div>
           <div class="bg-[#eef4f0] p-3.5 rounded-[6px] border-[2px] border-[#0f172a] text-xs text-[#0f172a] font-mono leading-relaxed max-h-36 overflow-y-auto whitespace-pre-wrap select-all">
-{ generateFinalPrompt(selectedProj) }
+{{ generateFinalPrompt(selectedProj) }}
           </div>
         </div>
 
@@ -665,7 +665,7 @@
           <div>
             <div class="flex justify-between text-xs text-[#0f172a] mb-1 font-bold">
               <span>完成進度：</span>
-              <span class="font-mono text-[#2f5d43]">{ selectedProj.progress }%</span>
+              <span class="font-mono text-[#2f5d43]">{{ selectedProj.progress }}%</span>
             </div>
             <input type="range" v-model.number="selectedProj.progress" @change="saveData" min="0" max="100" class="w-full accent-[#2f5d43]">
           </div>
@@ -698,7 +698,7 @@
             <div>
               <label class="text-[#3b6b73] font-bold block mb-1">所屬分類：</label>
               <select v-model="newProj.category" class="w-full bg-[#ffffff] border-[2px] border-[#0f172a] rounded-[4px] p-2 text-[#0f172a] font-bold shadow-[2px_2px_0px_#0f172a]">
-                <option v-for="cat in categories" :key="cat.id" :value="cat.id">{ cat.name }</option>
+                <option v-for="cat in categories" :key="cat.id" :value="cat.id">{{ cat.name }}</option>
               </select>
             </div>
             <div>
@@ -747,7 +747,7 @@
         <div class="bg-[#eef4f0] p-4 rounded-[6px] border-[2px] border-[#0f172a] shadow-[2px_2px_0px_#0f172a] mb-4 space-y-3">
           <div class="flex justify-between items-center text-xs font-bold">
             <span class="text-[#0f172a]">每週旗艦模型總點數上限：</span>
-            <span class="text-[#2f5d43] font-mono text-base">{ quotaPlan.total_weekly_budget } 點</span>
+            <span class="text-[#2f5d43] font-mono text-base">{{ quotaPlan.total_weekly_budget }} 點</span>
           </div>
           <input type="range" v-model.number="quotaPlan.total_weekly_budget" @change="saveData" min="40" max="250" step="5" class="w-full accent-[#2f5d43]">
           <div class="flex justify-between text-[11px] text-[#3b6b73] font-mono font-bold">
