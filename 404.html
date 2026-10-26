@@ -939,14 +939,28 @@
         let chartInstances = {};
 
         // 核心載入：優先讀取本地 localStorage (離線免開機亦可改)，若無則讀內置預設
-        const DB_KEY = 'auto_dev_portable_db_v5';
+        const DB_KEY = 'auto_dev_portable_db_v6';
+
+        // 核心資料儲存函數 (Save to LocalStorage)
+        const saveData = () => {
+          try {
+            const dataToSave = {
+              projects: projects.value,
+              categories: categories.value,
+              quotaPlan: quotaPlan.value
+            };
+            localStorage.setItem(DB_KEY, JSON.stringify(dataToSave));
+          } catch (e) {
+            console.error('儲存至 LocalStorage 失敗:', e);
+          }
+        };
+
+        // 核心資料載入與智慧合併 (Load & Smart Merge)
         const loadData = () => {
-          const DB_KEY = 'auto_dev_portable_db_v6';
           let baseProjects = DEFAULT_MANIFEST.projects || [];
           let baseCategories = DEFAULT_MANIFEST.categories || [];
           let baseQuota = DEFAULT_QUOTA || {};
 
-          // 智慧讀取歷史 LocalStorage (v1~v5 相容)
           const savedData = localStorage.getItem(DB_KEY) || 
                             localStorage.getItem('auto_dev_portable_db_v5') || 
                             localStorage.getItem('auto_dev_portable_db_v4') || 
@@ -970,7 +984,6 @@
                   }
                 });
 
-                // 以最新的 25 案 DEFAULT_MANIFEST 為權威基準，注入使用者的筆記與自訂狀態
                 const merged = baseProjects.map(bp => {
                   return {
                     ...bp,
@@ -980,7 +993,6 @@
                   };
                 });
 
-                // 同時保留使用者自行新增的自訂專案 (如 PRJ-26 等)
                 const officialIds = new Set(baseProjects.map(p => p.id));
                 cachedList.forEach(cp => {
                   if (cp && cp.id && !officialIds.has(cp.id)) {
@@ -993,7 +1005,7 @@
                 if (parsed.quotaPlan) baseQuota = parsed.quotaPlan;
               }
             } catch (err) {
-              console.warn('LocalStorage 遷移解析失敗，直接載入官方最新 25 案', err);
+              console.warn('LocalStorage 遷移解析失敗，直接載入最新 25 案', err);
             }
           }
 
@@ -1007,10 +1019,25 @@
           if (confirm('確定要同步至最新官方 25 案資料嗎？您既有的靈感備忘錄將會完整保留！')) {
             localStorage.removeItem('auto_dev_portable_db_v3');
             localStorage.removeItem('auto_dev_portable_db_v4');
+            localStorage.removeItem('auto_dev_portable_db_v5');
             localStorage.removeItem(DB_KEY);
             loadData();
             alert('已成功同步至最新 25 案，想像圖與規劃師已全數就緒！');
           }
+        };
+
+        // 靈感備忘錄操作函數 (Notes operations)
+        const addProjectNote = () => {
+          if (!newNoteText.value.trim() || !selectedProj.value) return;
+          if (!selectedProj.value.notes) selectedProj.value.notes = [];
+          const now = new Date();
+          const timeStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+          selectedProj.value.notes.unshift({
+            text: newNoteText.value.trim(),
+            created_at: timeStr
+          });
+          newNoteText.value = '';
+          saveData();
         };
 
         const removeProjectNote = (idx) => {
@@ -1018,6 +1045,8 @@
           selectedProj.value.notes.splice(idx, 1);
           saveData();
         };
+
+        
 
         // ＋新增專案
         const addNewProject = () => {
