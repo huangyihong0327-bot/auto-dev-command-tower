@@ -166,7 +166,7 @@
         <!-- 頂部功能操作按鈕群 -->
         <div class="flex items-center gap-2">
           <!-- ＋新增專案按鈕 -->
-          <button @click="showNewProjectModal = true" class="px-3.5 py-1.5 text-xs font-bold text-white bg-[#2f5d43] hover:bg-[#234632] rounded-[6px] border-[3px] border-[#0f172a] shadow-[3px_3px_0px_#0f172a] flex items-center gap-1.5 font-heading">
+          <button @click="openNewProjectModal" class="px-3.5 py-1.5 text-xs font-bold text-white bg-[#2f5d43] hover:bg-[#234632] rounded-[6px] border-[3px] border-[#0f172a] shadow-[3px_3px_0px_#0f172a] flex items-center gap-1.5 font-heading">
             <i class="fa-solid fa-plus-circle"></i>
             <span>＋新增專案</span>
           </button>
@@ -803,58 +803,70 @@
     </div>
 
     <!-- ================= 彈窗 2: 新增自訂專案 (支援外出新增擴充) ================= -->
+    <!-- ================= 彈窗 2: 新增自訂專案 (擴充矩陣) ================= -->
     <div v-if="showNewProjectModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm">
-      <div class="bg-[#ffffff] border-[3px] border-[#0f172a] w-full max-w-xl rounded-[8px] p-6 shadow-[8px_8px_0px_#0f172a] relative text-[#0f172a]">
+      <div class="bg-[#ffffff] border-[3px] border-[#0f172a] w-full max-w-xl rounded-[8px] p-6 shadow-[8px_8px_0px_#0f172a] relative text-[#0f172a] max-h-[90vh] overflow-y-auto">
         <button @click="showNewProjectModal = false" class="absolute right-5 top-5 text-[#0f172a] hover:text-[#d97706] p-2 text-xl font-bold">
           <i class="fa-solid fa-xmark"></i>
         </button>
 
         <h2 class="text-lg font-bold text-[#0f172a] font-heading mb-3 flex items-center gap-2">
           <i class="fa-solid fa-circle-plus text-[#2f5d43]"></i>
-          新增自訂開發專案 (隨時擴充)
+          <span>新增自訂專案 (擴充矩陣)</span>
         </h2>
 
-        <div class="space-y-3 text-xs">
-          <div>
-            <label class="text-[#3b6b73] font-bold block mb-1">專案編號 (自動計算)：</label>
-            <input v-model="newProj.id" type="text" class="w-full bg-[#eef4f0] border-[2px] border-[#0f172a] rounded-[4px] p-2 text-[#0f172a] font-mono font-bold shadow-[2px_2px_0px_#0f172a]">
-          </div>
-          <div>
-            <label class="text-[#3b6b73] font-bold block mb-1">專案名稱：</label>
-            <input v-model="newProj.name" type="text" placeholder="例: 智慧塔吊無人監控系統" class="w-full bg-[#ffffff] border-[2px] border-[#0f172a] rounded-[4px] p-2 text-[#0f172a] font-bold shadow-[2px_2px_0px_#0f172a]">
-          </div>
+        <div class="space-y-3.5 text-xs">
           <div class="grid grid-cols-2 gap-3">
             <div>
-              <label class="text-[#3b6b73] font-bold block mb-1">所屬分類：</label>
+              <label class="text-[#3b6b73] font-bold block mb-1">專案編號 (系統自動遞增)</label>
+              <input v-model="newProj.id" type="text" placeholder="例如: PRJ-26" class="w-full bg-[#eef4f0] border-[2px] border-[#0f172a] rounded-[4px] p-2 text-[#0f172a] font-mono font-bold shadow-[2px_2px_0px_#0f172a]">
+            </div>
+            <div>
+              <label class="text-[#3b6b73] font-bold block mb-1">每週預估模型點數 (Tokens)</label>
+              <input v-model.number="newProj.high_model_weekly_tokens" type="number" min="1000" max="50000" step="1000" class="w-full bg-[#ffffff] border-[2px] border-[#0f172a] rounded-[4px] p-2 text-[#0f172a] font-mono font-bold shadow-[2px_2px_0px_#0f172a]">
+            </div>
+          </div>
+
+          <div>
+            <label class="text-[#3b6b73] font-bold block mb-1">專案名稱 <span class="text-red-500">* (必填)</span></label>
+            <input v-model="newProj.name" @keydown.enter="addNewProject" type="text" placeholder="例如: 智慧門禁與車牌辨識系統" class="w-full bg-[#ffffff] border-[2px] border-[#0f172a] rounded-[4px] p-2 text-[#0f172a] font-bold shadow-[2px_2px_0px_#0f172a]">
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="text-[#3b6b73] font-bold block mb-1">領域分類</label>
               <select v-model="newProj.category" class="w-full bg-[#ffffff] border-[2px] border-[#0f172a] rounded-[4px] p-2 text-[#0f172a] font-bold shadow-[2px_2px_0px_#0f172a]">
                 <option v-for="cat in categories" :key="cat.id" :value="cat.id">{{ cat.name }}</option>
               </select>
             </div>
             <div>
-              <label class="text-[#3b6b73] font-bold block mb-1">優先等級：</label>
+              <label class="text-[#3b6b73] font-bold block mb-1">優先級</label>
               <select v-model="newProj.priority" class="w-full bg-[#ffffff] border-[2px] border-[#0f172a] rounded-[4px] p-2 text-[#0f172a] font-bold shadow-[2px_2px_0px_#0f172a]">
-                <option value="P0">P0 (最高優先)</option>
-                <option value="P1">P1 (核心重要)</option>
-                <option value="P2">P2 (後續次要)</option>
+                <option value="P0">P0 (最高優先 / 核心先發)</option>
+                <option value="P1">P1 (重點專案 / 依序推進)</option>
+                <option value="P2">P2 (儲備專案 / 後續迭代)</option>
               </select>
             </div>
           </div>
+
           <div>
-            <label class="text-[#3b6b73] font-bold block mb-1">專案目標與摘要：</label>
-            <textarea v-model="newProj.summary" rows="3" placeholder="簡要記錄此專案核心功能與願景..." class="w-full bg-[#ffffff] border-[2px] border-[#0f172a] rounded-[4px] p-2 text-[#0f172a] font-medium shadow-[2px_2px_0px_#0f172a]"></textarea>
+            <label class="text-[#3b6b73] font-bold block mb-1">專案簡要說明與核心目標</label>
+            <textarea v-model="newProj.summary" rows="3" placeholder="請簡要描述此專案欲解決的問題、技術方向或期望功能..." class="w-full bg-[#ffffff] border-[2px] border-[#0f172a] rounded-[4px] p-2 text-[#0f172a] font-medium shadow-[2px_2px_0px_#0f172a]"></textarea>
           </div>
+
           <div>
-            <label class="text-[#3b6b73] font-bold block mb-1">第一筆靈感備忘 (可選)：</label>
-            <input v-model="newProjInitialNote" type="text" placeholder="外出時想到的重點先記在這裡..." class="w-full bg-[#ffffff] border-[2px] border-[#0f172a] rounded-[4px] p-2 text-[#0f172a] font-medium shadow-[2px_2px_0px_#0f172a]">
+            <label class="text-[#3b6b73] font-bold block mb-1">第一筆隨手靈感備忘 (選填，隨時可於卡片中增修)</label>
+            <input v-model="newProjInitialNote" @keydown.enter="addNewProject" type="text" placeholder="例如: 記得先用 Python 做 POC 驗證演算法..." class="w-full bg-[#ffffff] border-[2px] border-[#0f172a] rounded-[4px] p-2 text-[#0f172a] font-medium shadow-[2px_2px_0px_#0f172a]">
           </div>
         </div>
 
-        <div class="flex justify-end gap-2 mt-5">
+        <div class="flex justify-end gap-2.5 mt-6 border-t-[2px] border-[#0f172a]/20 pt-4">
           <button @click="showNewProjectModal = false" class="px-4 py-2 bg-[#ffffff] hover:bg-[#eef4f0] text-[#0f172a] border-[2px] border-[#0f172a] rounded-[4px] shadow-[2px_2px_0px_#0f172a] text-xs font-bold">
             取消
           </button>
-          <button @click="addNewProject" class="px-4 py-2 bg-[#2f5d43] hover:bg-[#234632] text-white border-[2px] border-[#0f172a] rounded-[4px] shadow-[2px_2px_0px_#0f172a] text-xs font-bold font-heading">
-            確認新增專案
+          <button @click="addNewProject" class="px-5 py-2 bg-[#2f5d43] hover:bg-[#234632] text-white border-[2px] border-[#0f172a] rounded-[4px] shadow-[2px_2px_0px_#0f172a] text-xs font-bold font-heading flex items-center gap-1.5">
+            <i class="fa-solid fa-check"></i>
+            <span>確認建立新專案</span>
           </button>
         </div>
       </div>
@@ -1049,11 +1061,51 @@
         
 
         // ＋新增專案
+        // 自動計算下一個可用的專案編號 (例如 PRJ-26)
+        const updateNextProjectId = () => {
+          let maxNum = 0;
+          projects.value.forEach(p => {
+            if (p && p.id) {
+              const match = p.id.match(/^PRJ-(\d+)$/i);
+              if (match) {
+                const num = parseInt(match[1], 10);
+                if (num > maxNum) maxNum = num;
+              }
+            }
+          });
+          const nextNum = maxNum + 1;
+          const nextId = `PRJ-${String(nextNum).padStart(2, '0')}`;
+          newProj.value.id = nextId;
+          newProj.value.folder = `PRJ-${String(nextNum).padStart(2, '0')}_custom_automation`;
+        };
+
+        // 開啟新增專案彈窗並初始化預設值
+        const openNewProjectModal = () => {
+          updateNextProjectId();
+          newProj.value.name = '';
+          newProj.value.summary = '';
+          newProjInitialNote.value = '';
+          newProj.value.high_model_weekly_tokens = 12000;
+          newProj.value.category = (categories.value && categories.value[0]) ? categories.value[0].id : 'business_property';
+          newProj.value.priority = 'P1';
+          showNewProjectModal.value = true;
+        };
+
+        // 確認建立新專案 (包含自動生成專屬想像圖與規劃師)
         const addNewProject = () => {
-          if (!newProj.value.name.trim()) {
-            alert("請填寫專案名稱！");
+          const name = (newProj.value.name || '').trim();
+          if (!name) {
+            alert('請輸入專案名稱！');
             return;
           }
+          const id = (newProj.value.id || '').trim() || 'PRJ-26';
+
+          // 防止 ID 重複
+          if (projects.value.some(p => p.id.toLowerCase() === id.toLowerCase())) {
+            alert(`專案編號 ${id} 已存在，請使用其他編號！`);
+            return;
+          }
+
           const createdNotes = [];
           if (newProjInitialNote.value.trim()) {
             const now = new Date();
@@ -1061,19 +1113,73 @@
             createdNotes.push({ text: newProjInitialNote.value.trim(), created_at: timeStr });
           }
 
+          // 動態生成專屬 Neubrutalism 撞色概念想像圖
+          const safeName = name.replace(/[<>&"]/g, '');
+          const svgMarkup = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 260" width="100%" height="100%">
+  <defs>
+    <filter id="shadow" x="-5%" y="-5%" width="120%" height="120%">
+      <feDropShadow dx="4" dy="4" stdDeviation="0" flood-color="#0f172a" flood-opacity="1"/>
+    </filter>
+  </defs>
+  <rect width="300" height="260" fill="#eef4f0" rx="8" stroke="#0f172a" stroke-width="3"/>
+  <rect x="15" y="15" width="80" height="24" rx="4" fill="#2f5d43" stroke="#0f172a" stroke-width="2"/>
+  <text x="24" y="32" font-family="'Space Grotesk', sans-serif" font-weight="bold" font-size="12" fill="#ffffff">${id}</text>
+  <rect x="60" y="55" width="180" height="140" rx="8" fill="#ffffff" stroke="#2f5d43" stroke-width="4" filter="url(#shadow)"/>
+  <circle cx="150" cy="115" r="32" fill="#d97706" stroke="#0f172a" stroke-width="3"/>
+  <path d="M150 95 L150 135 M130 115 L170 115" stroke="#ffffff" stroke-width="6" stroke-linecap="round"/>
+  <rect x="15" y="222" width="270" height="26" rx="4" fill="#ffffff" stroke="#0f172a" stroke-width="2"/>
+  <text x="25" y="239" font-family="'DM Sans', sans-serif" font-weight="bold" font-size="11" fill="#0f172a">⚡ 概念想像：${safeName.substring(0, 16)}</text>
+</svg>`;
+          const svgDataUri = "data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(svgMarkup)));
+
           const itemToAdd = {
-            ...newProj.value,
-            notes: createdNotes
+            id: id,
+            folder: newProj.value.folder || `${id}_custom_automation`,
+            name: name,
+            category: newProj.value.category,
+            priority: newProj.value.priority || 'P1',
+            status: 'planned',
+            progress: 0,
+            difficulty: 'Medium',
+            high_model_weekly_tokens: newProj.value.high_model_weekly_tokens || 12000,
+            summary: newProj.value.summary.trim() || '自訂自動化開發計畫。',
+            key_tech: ['Custom Workflow', 'Automation Script', 'API Integration'],
+            notes: createdNotes,
+            concept_svg_data_uri: svgDataUri,
+            planner: {
+              name: '客製研發架構師',
+              title: '自訂自動化首席顧問',
+              avatar: '🚀',
+              advice: '建議先進行需求收斂與流程拆解，透過 Stage 1 Flash 梳理資料合約與邊界規則，再讓高階旗艦模型攻堅核心演算法。',
+              kpi: '功能驗收通過率 100% / 準時交付'
+            },
+            pipeline: {
+              stage1: {
+                model: 'Gemini 2.5 Flash / 星願模型',
+                goal: '需求架構初探與資料規格定義',
+                prompt: `請身為架構師，針對「${name}」進行系統分析，列出核心功能模組、API 資料合約與邊界防禦規則。`
+              },
+              stage2: {
+                model: 'Claude 3.7 Sonnet / GPT-4o',
+                goal: '核心演算法與高強度編程實作',
+                prompt: `請針對「${name}」實作高內聚、低耦合的核心程式碼，包含錯誤處理、日誌記錄與性能優化。`
+              },
+              stage3: {
+                model: '輕量旗艦模型 (Flash / 4o-mini)',
+                goal: '邊界條件測試與代碼審查',
+                prompt: `請審查「${name}」的實作程式碼，撰寫單元測試覆蓋極端輸入、異常狀態與效能瓶頸。`
+              }
+            }
           };
 
           projects.value.push(itemToAdd);
           saveData();
           showNewProjectModal.value = false;
-          newProjInitialNote.value = '';
           newProj.value.name = '';
           newProj.value.summary = '';
+          newProjInitialNote.value = '';
           updateNextProjectId();
-          alert(`已成功新增專案【${itemToAdd.id}: ${itemToAdd.name}】！已自動保存於本機儲存中。`);
+          alert(`🎉 成功新增專案【${itemToAdd.id}: ${itemToAdd.name}】！已自動配置專屬想像圖與首席規劃師。`);
         };
 
         const exportDataJson = () => {
@@ -1420,6 +1526,8 @@
           sortBy,
           selectedProj,
           showNewProjectModal,
+          openNewProjectModal,
+          updateNextProjectId,
           showBudgetAdjustModal,
           quotaPlan,
           newProj,
