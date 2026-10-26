@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
-  <title>22項自動化開發專案總控指揮塔 (獨立便攜離線版)</title>
+  <title>25項全自動開發專案總控指揮塔總控指揮塔 (獨立便攜離線版)</title>
   <!-- CDN 套件 (支援離線快取或線上即開即用) -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
@@ -571,6 +571,117 @@
         <h2 class="text-xl font-bold text-[#0f172a] font-heading mb-2">{{ selectedProj.name }}</h2>
         <p class="text-xs text-[#3b6b73] mb-4 leading-relaxed">{{ selectedProj.summary }}</p>
 
+        <!-- 🎨 專案專屬想像圖與概念視覺展示 -->
+        <div v-if="selectedProj.concept_svg_data_uri" class="mb-5 rounded-[6px] overflow-hidden border-[3px] border-[#0f172a] shadow-[4px_4px_0px_#0f172a] bg-[#eef4f0] relative">
+          <div class="h-48 md:h-56 w-full flex items-center justify-center overflow-hidden bg-[#eef4f0]">
+            <img :src="selectedProj.concept_svg_data_uri" :alt="selectedProj.name" class="w-full h-full object-contain" />
+          </div>
+          <div class="p-2.5 bg-[#ffffff] border-t-[2px] border-[#0f172a] flex items-center justify-between text-xs font-mono font-bold">
+            <span class="text-[#0f172a] flex items-center gap-1.5">
+              <i class="fa-solid fa-wand-magic-sparkles text-[#d97706]"></i>
+              專案架構視覺概念想像圖 (可點選另存獨立 SVG)
+            </span>
+            <a :href="selectedProj.concept_svg_data_uri" :download="selectedProj.id + '_concept.svg'" class="px-2 py-0.5 bg-[#2f5d43] text-white rounded text-[11px] hover:bg-[#1e3d2b]">
+              下載高解析 SVG
+            </a>
+          </div>
+        </div>
+
+        <!-- 👨‍💼 專案專屬首席規劃師戰略建言卡 -->
+        <div v-if="selectedProj.planner" class="mb-5 p-4 rounded-[6px] bg-[#ffffff] border-[3px] border-[#0f172a] shadow-[4px_4px_0px_#0f172a]">
+          <div class="flex items-start justify-between gap-3 mb-2">
+            <div class="flex items-center gap-2.5">
+              <span class="text-3xl p-1 bg-[#eef4f0] rounded-[6px] border border-[#0f172a] shadow-[2px_2px_0px_#0f172a]">
+                {{ selectedProj.planner.avatar }}
+              </span>
+              <div>
+                <div class="text-sm font-bold text-[#0f172a] font-heading flex items-center gap-2">
+                  <span>{{ selectedProj.planner.name }}</span>
+                  <span class="text-[10px] px-1.5 py-0.2 rounded bg-[#2f5d43] text-white font-mono">
+                    首席規劃師
+                  </span>
+                </div>
+                <div class="text-xs text-[#3b6b73] font-medium">{{ selectedProj.planner.title }}</div>
+              </div>
+            </div>
+            <span class="text-[10px] font-mono px-2 py-1 rounded bg-[#eef4f0] border border-[#0f172a] text-[#0f172a] font-bold">
+              KPI: {{ selectedProj.planner.kpi }}
+            </span>
+          </div>
+          <div class="p-3 bg-[#eef4f0] rounded-[4px] border border-[#0f172a] text-xs leading-relaxed text-[#0f172a]">
+            <span class="font-bold text-[#2f5d43] block mb-1">💡 規劃師實作戰略建言：</span>
+            {{ selectedProj.planner.advice }}
+          </div>
+        </div>
+
+        <!-- 🤖 多模型三階段執行規劃與分工流水線 (Multi-Model Pipeline) -->
+        <div v-if="selectedProj.pipeline" class="mb-5 p-4 rounded-[6px] bg-[#eef4f0] border-[3px] border-[#0f172a] shadow-[4px_4px_0px_#0f172a]">
+          <div class="flex items-center justify-between mb-3">
+            <h4 class="text-xs font-bold text-[#0f172a] font-heading flex items-center gap-1.5">
+              <i class="fa-solid fa-diagram-project text-[#2f5d43]"></i>
+              三階段多模型執行流水線（不同模型跑不同任務）
+            </h4>
+            <span class="text-[10px] font-mono font-bold text-[#3b6b73]">點擊可複製各階段專屬指令</span>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-2.5">
+            <!-- Stage 1 -->
+            <div class="p-3 bg-white rounded-[4px] border-[2px] border-[#0f172a] shadow-[2px_2px_0px_#0f172a] flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between mb-1.5">
+                  <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-[#3b6b73] text-white font-mono">Stage 1: 架構初探</span>
+                </div>
+                <div class="text-[11px] font-bold text-[#2f5d43] mb-1 flex items-center gap-1">
+                  <i class="fa-solid fa-sparkles"></i> {{ selectedProj.pipeline.stage1.model }}
+                </div>
+                <div class="text-xs font-bold text-[#0f172a] mb-1">{{ selectedProj.pipeline.stage1.goal }}</div>
+              </div>
+              <button 
+                @click="copyText(selectedProj.pipeline.stage1.prompt, 'Stage 1 指令已複製！')"
+                class="mt-2 w-full py-1 text-[10px] font-bold rounded bg-[#eef4f0] hover:bg-[#3b6b73] hover:text-white text-[#0f172a] border border-[#0f172a] transition-all">
+                複製 Stage 1 指令
+              </button>
+            </div>
+
+            <!-- Stage 2 -->
+            <div class="p-3 bg-white rounded-[4px] border-[2px] border-[#0f172a] shadow-[2px_2px_0px_#0f172a] flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between mb-1.5">
+                  <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-[#d97706] text-white font-mono">Stage 2: 核心攻堅</span>
+                </div>
+                <div class="text-[11px] font-bold text-[#d97706] mb-1 flex items-center gap-1">
+                  <i class="fa-solid fa-brain"></i> {{ selectedProj.pipeline.stage2.model }}
+                </div>
+                <div class="text-xs font-bold text-[#0f172a] mb-1">{{ selectedProj.pipeline.stage2.goal }}</div>
+              </div>
+              <button 
+                @click="copyText(selectedProj.pipeline.stage2.prompt, 'Stage 2 指令已複製！')"
+                class="mt-2 w-full py-1 text-[10px] font-bold rounded bg-[#eef4f0] hover:bg-[#d97706] hover:text-white text-[#0f172a] border border-[#0f172a] transition-all">
+                複製 Stage 2 指令
+              </button>
+            </div>
+
+            <!-- Stage 3 -->
+            <div class="p-3 bg-white rounded-[4px] border-[2px] border-[#0f172a] shadow-[2px_2px_0px_#0f172a] flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between mb-1.5">
+                  <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-[#0f172a] text-white font-mono">Stage 3: 驗收查核</span>
+                </div>
+                <div class="text-[11px] font-bold text-[#0f172a] mb-1 flex items-center gap-1">
+                  <i class="fa-solid fa-check-double"></i> {{ selectedProj.pipeline.stage3.model }}
+                </div>
+                <div class="text-xs font-bold text-[#0f172a] mb-1">{{ selectedProj.pipeline.stage3.goal }}</div>
+              </div>
+              <button 
+                @click="copyText(selectedProj.pipeline.stage3.prompt, 'Stage 3 指令已複製！')"
+                class="mt-2 w-full py-1 text-[10px] font-bold rounded bg-[#eef4f0] hover:bg-[#0f172a] hover:text-white text-[#0f172a] border border-[#0f172a] transition-all">
+                複製 Stage 3 指令
+              </button>
+            </div>
+          </div>
+        </div>
+
+
         <!-- 💡 核心亮點功能：在外隨手靈感與待辦備忘 (Quick Brainstorm & Notes) -->
         <div class="mb-5 p-4 rounded-[6px] bg-[#eef4f0] border-[2px] border-[#0f172a] shadow-[3px_3px_0px_#0f172a]">
           <div class="flex items-center justify-between mb-2">
@@ -919,7 +1030,7 @@
           }, null, 2));
           const dlAnchor = document.createElement('a');
           dlAnchor.setAttribute("href", dataStr);
-          dlAnchor.setAttribute("download", `22項專案總控_離線完整備份_${Date.now()}.json`);
+          dlAnchor.setAttribute("download", `25項專案總控_離線完整備份_${Date.now()}.json`);
           dlAnchor.click();
         };
 
